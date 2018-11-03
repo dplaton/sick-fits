@@ -1,10 +1,18 @@
-const Mutation = {
-    createDog(parent, args, context, info) {
-        global.dogs = global.dogs || [];
-        const newDog = { name: args.name };
-        global.dogs.push(newDog);
-        return newDog;
+/**
+ * This module contains the "mutations" for our database
+ */
+const Mutations = {
+    
+    // the database API returns a promise, so all functions should be async
+    async createItem(parent, args, context, info) {
+        const item = await context.db.mutation.createItem({
+            data: {
+                ...args
+            }
+        }, info);
+
+        return item;
     }
 };
 
-module.exports = Mutation;
+module.exports = Mutations;
