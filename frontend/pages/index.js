@@ -1,10 +1,10 @@
 import React, {Component} from 'react'
-import Link from 'next/link'
+import Items from '../components/Items'
 
-const Home = (props) => { 
+const Home = (props) => {
     return (
         <div>
-            <p>Hello. Go to <Link href="/sell"><a>sell page</a></Link></p>
+            <Items/>
         </div>
     )
 }
