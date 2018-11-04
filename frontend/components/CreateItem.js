@@ -32,9 +32,7 @@ export default class CreateItem extends Component {
     state = {
         title: 'Test',
         price: 3,
-        description: 'Test',
-        image: 'test.jpg',
-        largeImage: 'test-large.jpg'
+        description: 'Test'
     }
 
     handleChange = (e) => {
@@ -44,6 +42,25 @@ export default class CreateItem extends Component {
             : value;
 
         this.setState({[name]: val});
+    }
+
+    uploadImage = async e => {
+        const files = e.target.files;
+        const formData = new FormData();
+        formData.append('file',files[0]);
+        formData.append('upload_preset','sick-fits-sample');
+
+        const res = await fetch('https://api.cloudinary.com/v1_1/jollyca/image/upload', {
+            method: 'POST',
+            body: formData
+        });
+
+        const file = await res.json();
+        console.log(file);
+        this.setState({
+            image: file.secure_url,
+            largeImage: file.eager[0].secure_url
+        });
     }
 
     render() {
@@ -64,16 +81,26 @@ export default class CreateItem extends Component {
                     }}>
                         <Error error={error}/>
                         <fieldset disabled={loading} aria-busy={loading}>
-                            <label htmlFor="title">Title
-                                <input
-                                    type="text"
-                                    id="title"
-                                    name="title"
-                                    placeholder="title"
-                                    required
-                                    value={this.state.title}
-                                    onChange={this.handleChange}/>
-                            </label>
+                        <label htmlFor="image">Image
+                            <input
+                                type="file"
+                                id="image"
+                                name="image"
+                                placeholder="image"
+                                required
+                                onChange={this.uploadImage}/>
+                        </label>
+                        {this.state.image && <img src={this.state.image} alt="Upload preview"/>}
+                        <label htmlFor="title">Title
+                            <input
+                                type="text"
+                                id="title"
+                                name="title"
+                                placeholder="title"
+                                required
+                                value={this.state.title}
+                                onChange={this.handleChange}/>
+                        </label>
                             <label htmlFor="price">Price
                                 <input
                                     type="number"
