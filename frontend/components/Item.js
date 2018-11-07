@@ -1,26 +1,27 @@
-import React, {Component} from 'react';
+import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 
 import Link from 'next/link';
-import formatMoney from '../lib/formatMoney'
-import ItemStyles from './styles/ItemStyles'
-import Title from './styles/Title'
-import PriceTag from './styles/PriceTag'
+import formatMoney from '../lib/formatMoney';
+import ItemStyles from './styles/ItemStyles';
+import Title from './styles/Title';
+import PriceTag from './styles/PriceTag';
+import DeleteItem from './DeleteItem';
 
 class Item extends Component {
     render() {
-        const {item} = this.props;
+        const { item } = this.props;
         return (
             <ItemStyles>
-                {item.image && <img src={item.image} alt={item.title}/>}
+                {item.image && <img src={item.image} alt={item.title} />}
                 <Title>
                     <Link
                         href={{
-                        pathname: '/item',
-                        query: {
-                            id: item.id
-                        }
-                    }}>
+                            pathname: '/item',
+                            query: {
+                                id: item.id
+                            }
+                        }}>
                         <a>{item.title}</a>
                     </Link>
                 </Title>
@@ -29,15 +30,15 @@ class Item extends Component {
                 <div className="buttonList">
                     <Link
                         href={{
-                        pathname: 'update',
-                        query: {
-                            id: item.id
-                        }
-                    }}>
+                            pathname: 'update',
+                            query: {
+                                id: item.id
+                            }
+                        }}>
                         <a>Edit ✏️</a>
                     </Link>
                     <button>Add to cart 🛒</button>
-                    <button>Delete</button>
+                    <DeleteItem id={item.id}>Delete this item</DeleteItem>
                 </div>
             </ItemStyles>
         );

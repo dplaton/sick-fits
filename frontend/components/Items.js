@@ -1,13 +1,14 @@
-import React, {Component} from 'react'
-import gql from 'graphql-tag'
+import React, { Component } from 'react';
+import gql from 'graphql-tag';
 
-import {Query} from 'react-apollo'
-import styled from 'styled-components'
+import { Query } from 'react-apollo';
+import styled from 'styled-components';
 
-import Item from './Item'
+import Item from './Item';
 import PriceTag from './styles/PriceTag';
+import DeleteItem from './DeleteItem';
 
-const ALL_ITEMS_QUERY = gql `
+const ALL_ITEMS_QUERY = gql`
     query ALL_ITEMS_QUERY {
         items {
             id
@@ -21,14 +22,14 @@ const ALL_ITEMS_QUERY = gql `
 `;
 
 const Center = styled.div`
-    text-align:center;
+    text-align: center;
 `;
 
 const ItemList = styled.div`
-    display:grid;
+    display: grid;
     grid-template-columns: 1fr 1fr;
     grid-gap: 60px;
-    max-width:${props => props.theme.maxWidth};
+    max-width: ${props => props.theme.maxWidth};
     margin: 0 auto;
 `;
 
@@ -37,22 +38,22 @@ class Items extends Component {
         return (
             <Center>
                 <Query query={ALL_ITEMS_QUERY}>
-                    {
-                        ({data, error, loading}) => {
-                            if (loading) return <p>Loading...</p>
-                            if (error) return <p>Error! {error}</p>
+                    {({ data, error, loading }) => {
+                        if (loading) return <p>Loading...</p>;
+                        if (error) return <p>Error! {error}</p>;
 
-                            return (
-                                <ItemList>
-                                    {data.items.map( item=> <Item key={item.id} item={item}/>)}
-                                </ItemList>
-                            )
-                        }
-                    } 
+                        return (
+                            <ItemList>
+                                {data.items.map(item => (
+                                    <Item key={item.id} item={item} />
+                                ))}
+                            </ItemList>
+                        );
+                    }}
                 </Query>
             </Center>
-        )
+        );
     }
 }
 
-export default Items
+export default Items;
