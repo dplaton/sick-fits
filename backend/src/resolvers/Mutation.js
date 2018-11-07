@@ -34,6 +34,7 @@ const Mutations = {
     async deleteItem(parent, args, context, info) {
         const where = { id: args.id };
         // 1. find the item
+        // we "hardcode" the 'info' as 'what to expect from this query
         const item = await context.db.query.item({ where }, `{id title}`);
         // 2. check permissions
         //TODO
