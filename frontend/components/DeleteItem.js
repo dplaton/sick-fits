@@ -14,7 +14,8 @@ const DELETE_ITEM_MUTATION = gql`
 
 class DeleteItem extends Component {
     update = (cache, payload) => {
-        // manually update the cache on the client
+        // manually update the cache on the client instead of re-fetching everything
+
         // 1. Read the items from the cache
         const data = cache.readQuery({ query: ALL_ITEMS_QUERY });
 
@@ -22,8 +23,11 @@ class DeleteItem extends Component {
         data.items = data.items.filter(item => item.id !== payload.data.deleteItem.id);
         cache.writeQuery({ query: ALL_ITEMS_QUERY, data });
     };
+
     render() {
         return (
+            // relevant docs: https://www.apollographql.com/docs/react/essentials/mutations.html
+            // the "udpdate" prop specifies a function to be used as a 'callback' after the mutation was executed
             <Mutation mutation={DELETE_ITEM_MUTATION} variables={{ id: this.props.id }} update={this.update}>
                 {(deleteItem, { error }) => (
                     <button
