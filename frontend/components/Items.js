@@ -8,7 +8,7 @@ import Item from './Item';
 import PriceTag from './styles/PriceTag';
 import DeleteItem from './DeleteItem';
 
-const ALL_ITEMS_QUERY = gql`
+export const ALL_ITEMS_QUERY = gql`
     query ALL_ITEMS_QUERY {
         items {
             id
