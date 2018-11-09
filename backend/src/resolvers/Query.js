@@ -12,7 +12,8 @@ const Query = {
     //    return items;
     // }
 
-    item: forwardTo('db')
+    item: forwardTo('db'),
+    itemsConnection: forwardTo('db'),
 };
 
 module.exports = Query;

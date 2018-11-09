@@ -39,7 +39,6 @@ const SINGLE_ITEM_QUERY = gql`
 
 class SingleItem extends Component {
     render() {
-        console.log(this.props.id);
         return (
             <Query query={SINGLE_ITEM_QUERY} variables={{ id: this.props.id }}>
                 {({ data, error, loading }) => {
