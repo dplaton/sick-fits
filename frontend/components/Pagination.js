@@ -39,10 +39,8 @@ const Pagination = (props) => (
                     }}>
                         <a className='prev' aria-disabled={page <= 1}>Prev</a>
                     </Link>
-                    <p>{page}
-                        of {numPages}</p>
-                    <p>{itemsCount}
-                        items total</p>
+                    <p>{page}&nbsp; of {numPages}</p>
+                    <p>{itemsCount}&nbsp; items total</p>
                     <Link
                         href={{
                         pathname: 'items',
