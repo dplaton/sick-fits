@@ -8,7 +8,12 @@ type Mutation {
 }
 
 type Query {
+    # retrieve a list of items
     items(where: ItemWhereInput, skip: Int, first: Int, orderBy: ItemOrderByInput): [Item]
+
+    # retrieve one item
     item(where: ItemWhereUniqueInput!): Item
+
+    # retrieve data about the items (count etc.)
     itemsConnection(where: ItemWhereInput): ItemConnection!
 }
