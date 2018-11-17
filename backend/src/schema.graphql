@@ -17,4 +17,7 @@ type Query {
 
     # retrieve data about the items (count etc.)
     itemsConnection(where: ItemWhereInput): ItemConnection!
+
+    # retrieves the current user
+    me: User
 }
