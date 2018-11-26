@@ -1,9 +1,20 @@
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
-
+const { randomBytes } = require('crypto');
+const { promisify } = require('util');
 /**
  * This module contains the "mutations" for our database
  */
+
+const generateJwt = userId => {
+    return jwt.sign(
+        {
+            user: userId
+        },
+        process.env.APP_SECRET
+    );
+};
+
 const Mutations = {
     // the database API returns a promise, so all functions should be async
     async createItem(parent, args, context, info) {
@@ -92,8 +103,8 @@ const Mutations = {
             process.env.APP_SECRET
         );
 
-        // set it as a cookie on the response
-        context.response.cookie('token', token, {
+        // set it as a cookie on the updatedUser
+        context.updatedUser.cookie('token', token, {
             httpOnly: true,
             maxAge: 1000 * 60 * 60 * 24 * 365 // one year
         });
@@ -101,10 +112,9 @@ const Mutations = {
         return user;
     },
 
-    
-    async signIn(parent, {email, password}, context, info) {
+    async signIn(parent, { email, password }, context, info) {
         //1. Check that there's an user with that e-mail
-        const user = await context.db.query.user({where : {email}});
+        const user = await context.db.query.user({ where: { email } });
         if (!user) {
             throw new Error(`No user with email ${email}`);
         }
@@ -115,22 +125,80 @@ const Mutations = {
             throw new Error('Invalid credentials!');
         }
 
-        //3. Generate a JWT 
-        const token = jwt.sign({user: user.id}, process.env.APP_SECRET);
+        //3. Generate a JWT
+        const token = jwt.sign({ user: user.id }, process.env.APP_SECRET);
 
         //4. Set the token in the cookie
-        context.response.cookie('token', token, {
+        context.updatedUser.cookie('token', token, {
             httpOnly: true,
-            maxAge: 1000 * 60 * 60 * 24 * 365 // one year 
-        })
+            maxAge: 1000 * 60 * 60 * 24 * 365 // one year
+        });
         //5. Return the user
-        return user
-
+        return user;
     },
 
     signOut(parent, args, context, info) {
-        context.response.clearCookie('token');
+        context.updatedUser.clearCookie('token');
         return { message: 'Buh-bye!' };
+    },
+
+    async requestReset(parent, { email }, context, info) {
+        //1. Check if this is a real user
+        const user = await context.db.query.user({ where: { email } });
+        if (!user) {
+            throw new Error(`No user with email ${email}`);
+        }
+        console.log(user);
+        //2. Set the reset token and reset exp token
+        const promisified = promisify(randomBytes);
+        const resetToken = (await promisified(20)).toString('hex');
+        const resetTokenExpiry = Date.now() + 3600000;
+        //3. Send an e-mail with the reset token
+        console.log(`token is ${resetToken}`);
+        const updatedUser = await context.db.mutation.updateUser({
+            where: { email: user.email },
+            data: { resetToken: resetToken, resetTokenExpiry: resetTokenExpiry }
+        });
+        console.log(updatedUser);
+        return { message: `Generated ${resetToken}` };
+    },
+
+    async resetPassword(parent, args, context, info) {
+        //1. Check if the passwords match
+        if (args.password !== args.confirmPassword) {
+            throw new Error("Passwords don't match");
+        }
+
+        //2. Check if this is a legit reset token
+        // this returns an array of users and we just grab the first element
+        const [user] = await context.db.query.users({
+            where: {
+                resetToken: args.resetToken,
+                resetTokenExpiry_gte: Date.now() - 3600000
+            }
+        });
+        if (!user) {
+            throw new Error("Can't reset this user's password");
+        }
+        //4. Hash the new password
+        const password = await bcrypt.hash(args.password, 10);
+        //5. Set the new password and reset token related fields
+
+        const updatedUser = await context.db.mutation.updateUser({
+            where: { email: user.email },
+            data: { resetToken: null, resetTokenExpiry: null, password: password }
+        });
+        //6. Generate JWT
+        const token = generateJwt(user.id);
+
+        //7. Set JWT cookie
+        context.response.cookie('token', token, {
+            httpOnly: true,
+            maxAge: 1000 * 60 * 60 * 24 * 365 // one year
+        });
+        //8. Return user
+        console.log(updatedUser);
+        return updatedUser;
     }
 };
 
