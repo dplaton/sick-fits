@@ -9,7 +9,7 @@ const server = createServer();
 // express middleware to handle cookies
 server.express.use(cookieParser());
 
-// express middleware to decode JWT
+// express middleware to decode JWT (https://jwt.io/)
 server.express.use((req, res, next) => {
     const { token } = req.cookies;
     if (token) {

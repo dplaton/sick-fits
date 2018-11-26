@@ -1,11 +1,29 @@
 # This is not standard GraphQL, this is Prisma magic
 # import * from './generated/prisma.graphql'
 
+# This is an example of a custom type. It's not "a thing" in the backend, it's just something we return
+type SuccessMessage {
+    message: String
+}
+
 type Mutation {
+    # Create an item
     createItem(title: String, description: String, price: Int, image: String, largeImage: String): Item!
+
+    # Update an item
     updateItem(id: ID!, title: String, description: String, price: Int): Item!
+
+    # Delete an item
     deleteItem(id: ID!): Item
+
+    # User sign-up
     signUp(email: String!, password: String!, name: String): User
+
+    # User sign-in
+    signIn(email: String!, password: String!): User
+
+    # User sign-out
+    signOut: SuccessMessage
 }
 
 type Query {
