@@ -129,7 +129,7 @@ const Mutations = {
         const token = jwt.sign({ user: user.id }, process.env.APP_SECRET);
 
         //4. Set the token in the cookie
-        context.updatedUser.cookie('token', token, {
+        context.response.cookie('token', token, {
             httpOnly: true,
             maxAge: 1000 * 60 * 60 * 24 * 365 // one year
         });
@@ -138,7 +138,7 @@ const Mutations = {
     },
 
     signOut(parent, args, context, info) {
-        context.updatedUser.clearCookie('token');
+        context.response.clearCookie('token');
         return { message: 'Buh-bye!' };
     },
 

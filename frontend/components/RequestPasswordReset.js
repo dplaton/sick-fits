@@ -13,7 +13,7 @@ const REQUEST_RESET_MUTATION = gql`
     }
 `;
 
-class ResetPassword extends Component {
+class RequestPasswordReset extends Component {
     state = {
         email: ""
     };
@@ -65,4 +65,4 @@ class ResetPassword extends Component {
     }
 }
 
-export default ResetPassword;
+export default RequestPasswordReset;
