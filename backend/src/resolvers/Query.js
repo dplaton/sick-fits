@@ -17,7 +17,6 @@ const Query = {
 
     me:(parent, args, context, info) => {
         const userId = context.request.userId;
-        console.log(`User id is ${userId}`);
         if (!userId) {
             return null;
         }

@@ -38,7 +38,6 @@ const Mutations = {
             ...args
         };
         delete updates.id;
-        console.log(updates);
         return context.db.mutation.updateItem(
             {
                 data: updates,
@@ -151,18 +150,15 @@ const Mutations = {
         if (!user) {
             throw new Error(`No user with email ${email}`);
         }
-        console.log(user);
         //2. Set the reset token and reset exp token
         const promisified = promisify(randomBytes);
         const resetToken = (await promisified(20)).toString('hex');
         const resetTokenExpiry = Date.now() + 3600000;
     
-        console.log(`token is ${resetToken}`);
         const updatedUser = await context.db.mutation.updateUser({
             where: { email: user.email },
             data: { resetToken: resetToken, resetTokenExpiry: resetTokenExpiry }
         });
-        console.log(updatedUser);
         
         //3. Send an e-mail with the reset token
         const res = await transport.sendMail({
@@ -210,7 +206,6 @@ const Mutations = {
             maxAge: 1000 * 60 * 60 * 24 * 365 // one year
         });
         //8. Return user
-        console.log(updatedUser);
         return updatedUser;
     }
 };
