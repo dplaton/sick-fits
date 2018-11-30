@@ -2,6 +2,9 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const { randomBytes } = require('crypto');
 const { promisify } = require('util');
+
+const {makeANiceEmail, transport} = require('../mail');
+
 /**
  * This module contains the "mutations" for our database
  */
@@ -153,13 +156,26 @@ const Mutations = {
         const promisified = promisify(randomBytes);
         const resetToken = (await promisified(20)).toString('hex');
         const resetTokenExpiry = Date.now() + 3600000;
-        //3. Send an e-mail with the reset token
+    
         console.log(`token is ${resetToken}`);
         const updatedUser = await context.db.mutation.updateUser({
             where: { email: user.email },
             data: { resetToken: resetToken, resetTokenExpiry: resetTokenExpiry }
         });
         console.log(updatedUser);
+        
+        //3. Send an e-mail with the reset token
+        try {
+        const res = await transport.sendMail({
+            from: 'admin@sickfits.com',
+            to:user.email,
+            subject: "Your password reset token",
+                html: makeANiceEmail(`Your password has been reset\n\n
+                            Follow  <a href="${process.env.FRONTEND_URL}/reset?resetToken=${resetToken}">this link</a> to set a new password`)
+        }); } catch (e) {
+            console.error(e);
+        }
+
         return { message: `Generated ${resetToken}` };
     },
 
