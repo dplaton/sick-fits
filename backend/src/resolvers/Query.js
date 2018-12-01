@@ -1,5 +1,5 @@
 const { forwardTo } = require('prisma-binding');
-
+const { hasPermission } = require('../utils');
 /**
  * The queries from the schema.graphql file have to be "implemented" here
  */
@@ -27,6 +27,17 @@ const Query = {
             },
             info
         );
+    },
+
+     users: async (parent, args, context,info) => {
+        //2. Check if the user is logged in
+        if (!context.request.userId) {
+            //throw Error('You must be logged in');
+        }
+        //2. check if the users has the permissions to query the users
+        hasPermission(context.request.user, ['ADMIN','PERMISSIONSUPDATE']);
+
+        return context.db.query.users({},info);
     }
 };
 
