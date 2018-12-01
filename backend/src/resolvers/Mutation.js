@@ -21,9 +21,18 @@ const generateJwt = userId => {
 const Mutations = {
     // the database API returns a promise, so all functions should be async
     async createItem(parent, args, context, info) {
+        if (!context.request.userId) {
+            throw new Error('You must be logged in to do that!');
+        }
         const item = await context.db.mutation.createItem(
             {
                 data: {
+                    user: {
+                        // this is how we 'connect' to a related entity (in this case - the user)
+                        connect: {
+                            id: context.request.userId
+                        }
+                    },
                     ...args
                 }
             },
