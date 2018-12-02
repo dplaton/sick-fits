@@ -3,7 +3,8 @@ const jwt = require('jsonwebtoken');
 const { randomBytes } = require('crypto');
 const { promisify } = require('util');
 
-const {makeANiceEmail, transport} = require('../mail');
+const { makeANiceEmail, transport } = require('../mail');
+const { hasPermission } = require('../utils');
 
 /**
  * This module contains the "mutations" for our database
@@ -163,20 +164,22 @@ const Mutations = {
         const promisified = promisify(randomBytes);
         const resetToken = (await promisified(20)).toString('hex');
         const resetTokenExpiry = Date.now() + 3600000;
-    
+
         const updatedUser = await context.db.mutation.updateUser({
             where: { email: user.email },
             data: { resetToken: resetToken, resetTokenExpiry: resetTokenExpiry }
         });
-        
+
         //3. Send an e-mail with the reset token
         const res = await transport.sendMail({
             from: 'admin@sickfits.com',
-            to:user.email,
-            subject: "Your password reset token",
+            to: user.email,
+            subject: 'Your password reset token',
             html: makeANiceEmail(`Your password has been reset\n\n
-                            Follow  <a href="${process.env.FRONTEND_URL}/reset?resetToken=${resetToken}">this link</a> to set a new password`)
-        }); 
+                            Follow  <a href="${
+                                process.env.FRONTEND_URL
+                            }/reset?resetToken=${resetToken}">this link</a> to set a new password`)
+        });
 
         return { message: `Generated ${resetToken}` };
     },
@@ -216,6 +219,43 @@ const Mutations = {
         });
         //8. Return user
         return updatedUser;
+    },
+
+    async updatePermissions(parent, args, context, info) {
+        //1. Check if the user is logged in
+        console.log(info);
+        if (!context.request.userId) {
+            throw new Exception('You must be logged in to perform this operation');
+        }
+
+        //2. Query the current user
+        const currentUser = await context.db.query.user(
+            {
+                where: {
+                    id: context.request.userId
+                }
+            },
+            info
+        );
+        console.log(currentUser);
+        //3. Check if they have permissions
+        if (hasPermission(currentUser, ['ADMIN', 'PERMISSIONUPDATE'])) {
+            throw Error(`User ${user.name} doesn't have the permission to update permissions`);
+        }
+        //4. Update the permissions
+        const updatedPermissions = await context.db.mutation.updateUser(
+            {
+                data: {
+                    permissions: { set: args.permissions }
+                },
+                where: {
+                    id: args.userId
+                }
+            },
+            info
+        );
+
+        return updatedPermissions;
     }
 };
 
