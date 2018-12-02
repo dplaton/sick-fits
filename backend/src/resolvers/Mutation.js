@@ -68,11 +68,16 @@ const Mutations = {
             {
                 where
             },
-            `{id title}`
+            `{id title user { id }}`
         );
-        // 2. check permissions
-        //TODO
+        // 2. check permissions or if it's owner
+        const ownsItem = item.user.id === context.request.user.id;
+        const hasPermission = context.request.user.permissions.some(permission => ['ADMIN','ITEMDELETE'].includes(permission));
 
+        if (!ownsItem && !hasPermission) {
+            throw new Error('You are not allowed!');
+        }
+        
         // 3. Delete
         return context.db.mutation.deleteItem(
             {
