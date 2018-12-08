@@ -16,6 +16,7 @@ function createClient({ headers }) {
             });
         },
         // local state (data)
+        // ApolloClient can be used to manipulate local state, just like Redux
         clientState: {
             resolvers: {
                 Mutation: {

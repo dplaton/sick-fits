@@ -72,12 +72,14 @@ const Mutations = {
         );
         // 2. check permissions or if it's owner
         const ownsItem = item.user.id === context.request.user.id;
-        const hasPermission = context.request.user.permissions.some(permission => ['ADMIN','ITEMDELETE'].includes(permission));
+        const hasPermission = context.request.user.permissions.some(permission =>
+            ['ADMIN', 'ITEMDELETE'].includes(permission)
+        );
 
         if (!ownsItem && !hasPermission) {
             throw new Error('You are not allowed!');
         }
-        
+
         // 3. Delete
         return context.db.mutation.deleteItem(
             {
@@ -261,6 +263,46 @@ const Mutations = {
         );
 
         return updatedPermissions;
+    },
+
+    async addToCart(parent, args, context, info) {
+        // 1. Check if they're logged in
+        const { userId } = context.request;
+        if (!userId) {
+            throw new Error('You have to be logge in to perform this operation!');
+        }
+        // 2. Query the user's cart
+        const [existingCartItem] = await context.db.query.cartItems({
+            where: {
+                user: { id: userId },
+                item: { id: args.id }
+            }
+        });
+
+        // 3. Check if the item is in the cart and increment if it is.
+        if (existingCartItem) {
+            return context.db.mutation.updateCartItem(
+                {
+                    where: { id: existingCartItem.id },
+                    data: { quantity: existingCartItem.quantity + 1 }
+                },
+                info
+            );
+        }
+        // 4. Create a fresh cart item if the item is not in the cart
+
+        return context.db.mutation.createCartItem({
+            data: {
+                quantity: 1,
+                user: {
+                    connect: { id: userId }
+                },
+                item: {
+                    connect: { id: args.id }
+                }
+            },
+            info
+        });
     }
 };
 
