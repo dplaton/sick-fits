@@ -2,25 +2,31 @@ import React from "react";
 import formatMoney from "../lib/formatMoney";
 import styled from "styled-components";
 
-import RemoveFromCart from './RemoveFromCart';
+import RemoveFromCart from "./RemoveFromCart";
 
 const CartItemStyles = styled.li`
-    padding:1rem 0;
+    padding: 1rem 0;
     border-bottom: solid 1px ${props => props.theme.lightgrey};
     display: grid;
-    align-items:center;
+    align-items: center;
     grid-template-columns: auto 1fr auto;
     img {
         margin-right: 10px;
     }
-    h3,p {
-        margin:0
+    h3,
+    p {
+        margin: 0;
     }
-
 `;
 
 const CartItem = ({ cartItem }) => {
-    const item = { cartItem };
+    if (cartItem.item === null)
+        return (
+            <CartItemStyles>
+                <p>This item has been removed</p>
+                <RemoveFromCart id={cartItem.id} />
+            </CartItemStyles>
+        );
     return (
         <CartItemStyles>
             <img
@@ -30,11 +36,16 @@ const CartItem = ({ cartItem }) => {
             />
             <div className="cart-item-details">
                 <h3>{cartItem.item.title}</h3>
-                <p>{formatMoney(cartItem.item.price * cartItem.quantity) } 
-                {' - '}
-                <em>{cartItem.quantity} &times; {formatMoney(cartItem.item.price)} each </em></p>
+                <p>
+                    {formatMoney(cartItem.item.price * cartItem.quantity)}
+                    {" - "}
+                    <em>
+                        {cartItem.quantity} &times;{" "}
+                        {formatMoney(cartItem.item.price)} each{" "}
+                    </em>
+                </p>
             </div>
-            <RemoveFromCart id={cartItem.id}/>
+            <RemoveFromCart id={cartItem.id} />
         </CartItemStyles>
     );
 };

@@ -26,6 +26,7 @@ const Cart = () => {
         <User>
             {({ data: { me } }) => {
                 if (!me) return null;
+                const cartCount = me.cart.reduce((acc, cartItem) => acc+=cartItem.quantity, 0);
                 return (
                     <Mutation mutation={TOGGLE_CART_MUTATION}>
                         {toggleCart => (
@@ -42,7 +43,7 @@ const Cart = () => {
                                             <Supreme>
                                                {me.name}'s cart
                                             </Supreme>
-                                            <p>You have {me.cart.length} item{me.cart.length === 1 ? '':'s'} in cart</p>
+                                            <p>You have {cartCount===0 ? 'no':cartCount} item{cartCount === 1 ? '':'s'} in cart</p>
                                         </header>
                                         <ul>
                                         {me.cart.map(item => {
@@ -50,7 +51,10 @@ const Cart = () => {
                                         })}
                                         </ul>
                                         <footer>
-                                            <p>{formatMoney(me.cart.reduce((acc, cartItem) => (acc += cartItem.quantity * cartItem.item.price),0))}</p>
+                                            <p>{formatMoney(me.cart.reduce((acc, cartItem) => {
+                                                if (!cartItem.item) return acc;
+                                                return acc + cartItem.quantity * cartItem.item.price
+                                            },0))}</p>
                                             <SickButton>Checkout</SickButton>
                                         </footer>
                                     </CartStyles>
