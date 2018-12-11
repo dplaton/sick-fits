@@ -303,6 +303,31 @@ const Mutations = {
             },
             info
         });
+    },
+
+    async removeFromCart(parent, args, context, info) {
+        //1. Check if they're logged in
+        if (!context.request.userId) {
+            throw new Error('You must be logged in to perform this operation');
+        }
+        //2. Find the cart item
+        const cartItem = await context.db.query.cartItem({where: {
+            id: args.id
+        }},`{id, user { id }}`);
+
+        if (!cartItem) {
+            throw new Error('Cart item not found');
+        }
+
+        //3. Check the owner of the cart item
+        if (cartItem.user.id !== context.request.userId) {
+            throw new Error('You cannot remove a cart item you don\'t own');
+        }
+
+        //4. Remove the cart item
+        return context.db.mutation.deleteCartItem({
+            where: {id: args.id}
+        }, info);
     }
 };
 
