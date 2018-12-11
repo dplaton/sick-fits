@@ -32,7 +32,11 @@ type Mutation {
     # Updates the permission set for an user
     updatePermissions(permissions:[Permission], userId: String!): User!
 
+    # Adds an item to the cart
     addToCart(id: ID!): CartItem
+
+    # Removes an item from the cart
+    removeFromCart(id: ID!): CartItem
 }
 
 type Query {
