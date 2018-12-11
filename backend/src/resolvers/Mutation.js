@@ -278,7 +278,7 @@ const Mutations = {
                 item: { id: args.id }
             }
         });
-
+        console.log("Item in cart", existingCartItem);
         // 3. Check if the item is in the cart and increment if it is.
         if (existingCartItem) {
             return context.db.mutation.updateCartItem(
@@ -289,8 +289,8 @@ const Mutations = {
                 info
             );
         }
-        // 4. Create a fresh cart item if the item is not in the cart
 
+        // 4. Create a fresh cart item if the item is not in the cart
         return context.db.mutation.createCartItem({
             data: {
                 quantity: 1,
