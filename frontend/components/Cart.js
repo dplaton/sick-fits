@@ -1,7 +1,8 @@
 import React from "react";
 import { Query, Mutation } from "react-apollo";
+import {adopt} from "react-adopt";
 import gql from "graphql-tag";
-import formatMoney from '../lib/formatMoney';
+import formatMoney from "../lib/formatMoney";
 
 import User from "./User";
 import CartStyles from "./styles/CartStyles";
@@ -21,50 +22,71 @@ export const TOGGLE_CART_MUTATION = gql`
         toggleCart @client
     }
 `;
+
+/*
+ * Down below we have a complete mess with render props and queries and mutations and whatnot.
+ *  We use react-adopt (https://github.com/pedronauck/react-adopt) to compose these render prop components
+ * This is basically an object which maps the render prop components. We use that weird way with arrow functions
+ * because otherwise react complains that the components are missing the required children.
+ */
+const Composed = adopt({
+    user: ({ render }) => <User>{render}</User>,
+    toggleCart: ({ render }) => (
+        <Mutation mutation={TOGGLE_CART_MUTATION}>{render}</Mutation>
+    ),
+    localState: ({ render }) => (
+        <Query query={LOCAL_STATE_QUERY}>{render}</Query>
+    )
+});
+
 const Cart = () => {
     return (
-        <User>
-            {({ data: { me } }) => {
+        <Composed>
+            {({user, toggleCart, localState}) => {
+                const me  = user.data.me;
                 if (!me) return null;
-                const cartCount = me.cart.reduce((acc, cartItem) => acc+=cartItem.quantity, 0);
+                const cartCount = me.cart.reduce(
+                    (acc, cartItem) => (acc += cartItem.quantity),
+                    0
+                );
                 return (
-                    <Mutation mutation={TOGGLE_CART_MUTATION}>
-                        {toggleCart => (
-                            <Query query={LOCAL_STATE_QUERY}>
-                                {({ data }) => (
-                                    <CartStyles open={data.cartOpen}>
-                                        <header>
-                                            <CloseButton
-                                                title="close"
-                                                onClick={toggleCart}
-                                            >
-                                                &times;
-                                            </CloseButton>
-                                            <Supreme>
-                                               {me.name}'s cart
-                                            </Supreme>
-                                            <p>You have {cartCount===0 ? 'no':cartCount} item{cartCount === 1 ? '':'s'} in cart</p>
-                                        </header>
-                                        <ul>
-                                        {me.cart.map(item => {
-                                            return (<CartItem key={item.id} cartItem={item}/>)
-                                        })}
-                                        </ul>
-                                        <footer>
-                                            <p>{formatMoney(me.cart.reduce((acc, cartItem) => {
-                                                if (!cartItem.item) return acc;
-                                                return acc + cartItem.quantity * cartItem.item.price
-                                            },0))}</p>
-                                            <SickButton>Checkout</SickButton>
-                                        </footer>
-                                    </CartStyles>
+                    <CartStyles open={localState.data.cartOpen}>
+                        <header>
+                            <CloseButton title="close" onClick={toggleCart}>
+                                &times;
+                            </CloseButton>
+                            <Supreme>{me.name}'s cart</Supreme>
+                            <p>
+                                You have {cartCount === 0 ? "no" : cartCount}{" "}
+                                item{cartCount === 1 ? "" : "s"} in cart
+                            </p>
+                        </header>
+                        <ul>
+                            {me.cart.map(item => {
+                                return (
+                                    <CartItem key={item.id} cartItem={item} />
+                                );
+                            })}
+                        </ul>
+                        <footer>
+                            <p>
+                                {formatMoney(
+                                    me.cart.reduce((acc, cartItem) => {
+                                        if (!cartItem.item) return acc;
+                                        return (
+                                            acc +
+                                            cartItem.quantity *
+                                                cartItem.item.price
+                                        );
+                                    }, 0)
                                 )}
-                            </Query>
-                        )}
-                    </Mutation>
+                            </p>
+                            <SickButton>Checkout</SickButton>
+                        </footer>
+                    </CartStyles>
                 );
             }}
-        </User>
+        </Composed>
     );
 };
 
