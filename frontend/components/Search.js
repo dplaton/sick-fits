@@ -10,6 +10,7 @@ import {
     Styles,
     SearchStyles
 } from "./styles/DropDown";
+import Router from "next/router";
 
 const SEARCH_ITEMS_QUERY = gql`
     query SEARCH_ITEMS_QUERY($searchTerm: String!) {
@@ -27,6 +28,15 @@ const SEARCH_ITEMS_QUERY = gql`
         }
     }
 `;
+
+function routeToItem(item) {
+    Router.push({
+        pathname: "/item",
+        query: {
+            id: item.id
+        }
+    });
+}
 
 class AutoComplete extends React.Component {
     state = {
@@ -56,34 +66,74 @@ class AutoComplete extends React.Component {
         });
     }, 360);
 
+    /**
+     * We use downshift to handle the autocomplete. This gives us some interesting things such as select handlers for the items in the dropdown, key navigation etc.
+     */
     render() {
         return (
             <SearchStyles>
-                <div>
-                    <ApolloConsumer>
-                        {client => (
-                            <input
-                                type="search"
-                                onChange={e => {
-                                    e.persist();
-                                    this.onChange(e, client);
-                                }}
-                            />
-                        )}
-                    </ApolloConsumer>
-                    <DropDown>
-                        {this.state.items.map(item => (
-                            <DropDownItem key={item.id}>
-                                <img
-                                    width="50"
-                                    src={item.image}
-                                    alt="{item.title}"
-                                />
-                                >{item.title}
-                            </DropDownItem>
-                        ))}
-                    </DropDown>
-                </div>
+                <Downshift
+                    onChange={routeToItem}
+                    itemToString={item => (item === null ? "" : item.title)}
+                >
+                    {({
+                        getInputProps,
+                        getItemProps,
+                        isOpen,
+                        inputValue,
+                        highlightedIndex
+                    }) => (
+                        <div>
+                            <ApolloConsumer>
+                                {client => (
+                                    <input
+                                        {...getInputProps({
+                                            type: "search",
+                                            onChange: e => {
+                                                e.persist();
+                                                this.onChange(e, client);
+                                            },
+                                            className: this.state.loading
+                                                ? "loading"
+                                                : "",
+                                            id: "search",
+                                            placeholder: "Search for products"
+                                        })}
+                                    />
+                                )}
+                            </ApolloConsumer>
+                            {
+                                // if the dropdown is open we display dropdown items
+                                isOpen && (
+                                <DropDown>
+                                    {this.state.items.map((item, idx) => (
+                                        <DropDownItem
+                                            {...getItemProps({ item })}
+                                            key={item.id}
+                                            highlighted={
+                                                idx === highlightedIndex
+                                            }>
+                                            <img
+                                                width="50"
+                                                src={item.image}
+                                                alt="{item.title}"
+                                            />
+                                            >{item.title}
+                                        </DropDownItem>
+                                    ))}
+                                    {
+                                        // if there are no results...
+                                        !this.state.items.length &&
+                                        !this.state.loading && (
+                                            <DropDownItem>
+                                                Nothing found for {inputValue}
+                                            </DropDownItem>
+                                        )}
+                                </DropDown>
+                            )}
+                        </div>
+                    )}
+                </Downshift>
             </SearchStyles>
         );
     }
