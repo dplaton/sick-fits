@@ -10,6 +10,7 @@ import SickButton from "./styles/SickButton";
 import CloseButton from "./styles/CloseButton";
 import Supreme from "./styles/Supreme";
 import CartItem from "./CartItem";
+import TakeMyMoney from "./TakeMyMoney";
 
 export const LOCAL_STATE_QUERY = gql`
     query {
@@ -81,7 +82,9 @@ const Cart = () => {
                                     }, 0)
                                 )}
                             </p>
-                            <SickButton>Checkout</SickButton>
+                            <TakeMyMoney>
+                                <SickButton>Checkout</SickButton>
+                            </TakeMyMoney>
                         </footer>
                     </CartStyles>
                 );
