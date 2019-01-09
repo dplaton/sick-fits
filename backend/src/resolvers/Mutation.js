@@ -2,7 +2,7 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const { randomBytes } = require('crypto');
 const { promisify } = require('util');
-
+const stripe = require('../stripe');
 const { makeANiceEmail, transport } = require('../mail');
 const { hasPermission } = require('../utils');
 
@@ -328,6 +328,80 @@ const Mutations = {
         return context.db.mutation.deleteCartItem({
             where: {id: args.id}
         }, info);
+    },
+
+    async createOrder(parent, args, context, info) {
+        // 1. Query the current user, make sure they are signed in
+        const { userId } = context.request;
+        if (!userId) {
+            throw new Error('You must be logged in to peform this operation');
+        }
+        const user = await context.db.query.user({where: {id: userId }}, 
+            `{
+                id
+                name
+                email
+                cart {
+                    id
+                    quantity
+                    item {
+                        id
+                        title
+                        price
+                        description
+                        image
+                        largeImage
+                    }
+                }
+            }`);
+            
+        // 2. Recalculate the price from the server side
+
+        const cartTotal = user.cart.reduce((acc, cartItem) => (acc+cartItem.quantity*cartItem.item.price),0);
+        console.log(`Charging for ${cartTotal}`)
+
+        // 3. Create the Stripe charge
+        const charge = await stripe.charges.create({
+            amount: cartTotal,
+            currency:'USD',
+            source: args.token
+        });
+
+        // 4. Convert the cart items to order items
+        const orderItems = user.cart.map( cartItem => {
+            const orderItem = {
+                ...cartItem.item,
+                quantity: cartItem.quantity,
+                user: {
+                    connect: {
+                        id: userId
+                    }
+                }
+            }
+            delete orderItem.id;
+            return orderItem;
+        });
+
+        // 5. Create the order
+        const order = await context.db.mutation.createOrder({
+            data: {
+                total: charge.amount,
+                charge: charge.id,
+                items: { create: orderItems},
+                user: { connect: {id: userId}}
+            }
+        });
+
+        // 6. Clear the user's cart, delete cart items
+        const cartItemIds = user.cart.map(cartItem => cartItem.id);
+        await context.db.mutation.deleteManyCartItems({
+            where: {
+                id_in: cartItemIds
+            }
+        });
+
+        // 7.  Return the order
+        return order;
     }
 };
 

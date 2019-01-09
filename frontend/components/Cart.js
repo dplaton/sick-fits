@@ -82,9 +82,9 @@ const Cart = () => {
                                     }, 0)
                                 )}
                             </p>
-                            <TakeMyMoney>
+                            {cartCount > 0 && <TakeMyMoney>
                                 <SickButton>Checkout</SickButton>
-                            </TakeMyMoney>
+                            </TakeMyMoney>}
                         </footer>
                     </CartStyles>
                 );
