@@ -1,10 +1,12 @@
 import React from "react";
 import gql from "graphql-tag";
 import StripeCheckout from "react-stripe-checkout";
+import { Mutation } from "react-apollo";
+import Router from "next/router";
+import NProgress from 'nprogress';
+
 import User, { CURRENT_USER_QUERY } from "./User";
 import calcTotalPrice from "../lib/calcTotalPrice";
-import { Mutation } from "react-apollo";
-import { responsePathAsArray } from "graphql";
 
 const CREATE_ORDER_MUTATION = gql`
     mutation createOrder($token: String!) {
@@ -26,6 +28,7 @@ function totalItems(cart) {
 
 class TakeMyMoney extends React.Component {
     onToken = async (res, createOrder) => {
+        NProgress.start();
         const order = await createOrder({
             variables: {
                 token: res.id
@@ -33,8 +36,10 @@ class TakeMyMoney extends React.Component {
         }).catch(err => {
             alert(err.message);
         });
-
-        console.log(order);
+        Router.push({
+            pathname: '/order',
+            query: { orderId: order.data.createOrder.id}
+        })
     };
 
     render() {

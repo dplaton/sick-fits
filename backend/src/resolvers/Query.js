@@ -38,6 +38,29 @@ const Query = {
         hasPermission(context.request.user, ['ADMIN','PERMISSIONSUPDATE']);
 
         return context.db.query.users({},info);
+    },
+
+    async order (parent, args, context, info) {
+        // 1. Check that the user is logged in
+        const {userId} = context.request;
+        if (!userId) {
+            throw Error('You must be logged in');
+        }
+        // 2. Query the order
+        const order = await context.db.query.order({where: {id: args.id}}, info);
+        console.log(order);
+        // 3. Check that it has permissions to see the order
+        const ownsOrder = order.user.id === userId;
+        console.log(`Owns order? ${ownsOrder}`)
+        const hasPermissionsToSeeOrder = context.request.user.permissions.includes('ADMIN');
+        console.log(`Has permissions to see order? ${hasPermissionsToSeeOrder}`);
+        if (!ownsOrder || !hasPermissionsToSeeOrder) {
+            throw new Error('You do not have permissions to see this order')
+        }
+        // 4. Return order
+
+        return order;
+        
     }
 };
 

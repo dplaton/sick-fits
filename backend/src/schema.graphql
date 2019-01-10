@@ -56,6 +56,9 @@ type Query {
 
     # retrieve all the users!
     users: [User]!
+
+    # retrieves an order
+    order(id: ID!): Order
 }
 
 # We are re-defining the user because we don't want all the fields of the actual user object in the front-end
