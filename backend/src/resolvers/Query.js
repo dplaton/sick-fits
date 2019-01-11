@@ -48,7 +48,6 @@ const Query = {
         }
         // 2. Query the order
         const order = await context.db.query.order({where: {id: args.id}}, info);
-        console.log(order);
         // 3. Check that it has permissions to see the order
         const ownsOrder = order.user.id === userId;
         console.log(`Owns order? ${ownsOrder}`)
@@ -60,7 +59,27 @@ const Query = {
         // 4. Return order
 
         return order;
-        
+    },
+
+    async orders(prent, args, context,info) {
+        const {userId}=context.request;
+        if (!userId) {
+            throw Error('You must be logged in to perform this operation');
+        }
+
+        if (!context.request.user.permissions.includes('ADMIN')) {
+            throw Error('You do not have permissions to see orders');
+        }
+
+        const orders = await context.db.query.orders({
+            where: {
+                user: {
+                    id: userId
+                }
+            }
+        }, info);
+
+        return orders;
     }
 };
 
