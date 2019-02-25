@@ -12,7 +12,7 @@ const Nav = () => (
     <User>
         {({ data: { me } }) => (
             // two level destructuring, like payload.data.me
-            <NavStyles>
+            <NavStyles data-test="nav">
                 <Link href="/items">
                     <a>Shop</a>
                 </Link>
