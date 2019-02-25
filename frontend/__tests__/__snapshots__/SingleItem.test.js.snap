@@ -1,0 +1,32 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`<SingleItem /> renders error when the item is missing 1`] = `
+<p
+  data-test="graphql-error"
+>
+  <strong>
+    🛑
+  </strong>
+  Item not found
+</p>
+`;
+
+exports[`<SingleItem /> renders the data properly 1`] = `
+<h2>
+  Viewing: 
+  dogs are best
+</h2>
+`;
+
+exports[`<SingleItem /> renders the data properly 2`] = `
+<p>
+  dogs
+</p>
+`;
+
+exports[`<SingleItem /> renders the data properly 3`] = `
+<img
+  alt="dogs are best"
+  src="dog.jpg"
+/>
+`;
