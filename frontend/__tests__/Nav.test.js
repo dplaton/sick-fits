@@ -4,9 +4,7 @@ import wait from "waait";
 import { MockedProvider } from "react-apollo/test-utils";
 import Nav from "../components/Nav";
 import { CURRENT_USER_QUERY } from "../components/User";
-import { fakeUser } from "../lib/testUtils";
-import Signout from "../components/Signout";
-import Signin from "../components/Signin";
+import { fakeUser, fakeCartItem } from "../lib/testUtils";
 
 const notSignedInMocks = [
     {
@@ -22,9 +20,22 @@ const signedInMocks = [
     }
 ];
 
+const signedInWithCartEntriesMock = [
+    {
+        request: { query: CURRENT_USER_QUERY },
+        result: {
+            data: {
+                me: {
+                    ...fakeUser(),
+                    cart: [fakeCartItem(), fakeCartItem(), fakeCartItem()]
+                }
+            }
+        }
+    }
+];
+
 describe("<Nav/>", () => {
     it("shows the required options when the user is logged in", async () => {
-        
         const wrapper = mount(
             <MockedProvider mocks={signedInMocks}>
                 <Nav />
@@ -32,13 +43,13 @@ describe("<Nav/>", () => {
         );
 
         await wait();
-        wrapper.update()
-        const nav = wrapper.find('[data-test="nav"]');
-        expect(nav.contains(<Signout/>)).toBe(true);
+        wrapper.update();
+        const nav = wrapper.find('ul[data-test="nav"]');
+        expect(nav.children().length).toBe(6);
+        expect(nav.text()).toContain("Sign out!");
     });
 
-    it('shows the sign-in option when the user is not logged in', async () => {
- 
+    it("shows the sign-in option when the user is not logged in", async () => {
         const wrapper = mount(
             <MockedProvider mocks={notSignedInMocks}>
                 <Nav />
@@ -47,7 +58,18 @@ describe("<Nav/>", () => {
 
         await wait();
         wrapper.update();
-        const nav = wrapper.find('[data-test="nav"]');
+        const nav = wrapper.find('ul[data-test="nav"]');
         expect(toJSON(nav)).toMatchSnapshot();
+    });
+
+    it("shows the correct number of cart entries", async () => {
+        const wrapper = mount(<MockedProvider mocks={signedInWithCartEntriesMock}>
+            <Nav/>
+        </MockedProvider>);
+        await wait();
+        wrapper.update();
+
+        const cartCount = wrapper.find('ul[data-test="nav"] div.count');
+        expect(toJSON(cartCount)).toMatchSnapshot();
     });
 });
