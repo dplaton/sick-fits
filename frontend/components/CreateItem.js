@@ -30,9 +30,11 @@ export const CREATE_ITEM_MUTATION = gql `
 export default class CreateItem extends Component {
 
     state = {
-        title: 'Test',
-        price: 3,
-        description: 'Test'
+        title: '',
+        price: 0,
+        description: '',
+        image:'',
+        largeImage:''
     }
 
     handleChange = (e) => {
@@ -67,10 +69,10 @@ export default class CreateItem extends Component {
             <Mutation mutation={CREATE_ITEM_MUTATION} variables={this.state}>
                 {(createItem, {loading, error, data}) => (
                     <Form
+                        data-test="createItemForm"
                         onSubmit={async e => {
                         e.preventDefault();
                         const res = await createItem();
-                        console.log(res);
                         Router.push({
                             pathname: '/item',
                             query: {

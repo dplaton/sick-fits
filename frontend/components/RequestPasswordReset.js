@@ -29,6 +29,7 @@ class RequestPasswordReset extends Component {
                     return (
                         <Form
                             method="POST"
+                            data-test="requestResetForm"
                             onSubmit={async e => {
                                 e.preventDefault();
                                 await requestReset();
@@ -64,5 +65,5 @@ class RequestPasswordReset extends Component {
         );
     }
 }
-
+export {REQUEST_RESET_MUTATION};
 export default RequestPasswordReset;

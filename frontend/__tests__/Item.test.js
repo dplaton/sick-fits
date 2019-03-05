@@ -17,9 +17,9 @@ describe('<Item/>', () => {
         const wrapper = shallow(<ItemComponent item={fakeItem}/>);
         expect(toJSON(wrapper)).toMatchSnapshot();
     });
-    /* 
+   
     it('renders the image properly', () => {
-        const wrapper = shallow(<Item item={fakeItem}/>);
+        const wrapper = shallow(<ItemComponent item={fakeItem}/>);
 
         const img = wrapper.find('img');
         expect(img.props().src).toBe(fakeItem.image);
@@ -27,7 +27,7 @@ describe('<Item/>', () => {
     })
 
     it('renders the metadata properly', () => {
-        const wrapper = shallow(<Item item={fakeItem}/>);
+        const wrapper = shallow(<ItemComponent item={fakeItem}/>);
 
         const PriceTag = wrapper.find('PriceTag');
         expect(PriceTag.children().text()).toBe('$10');
@@ -36,7 +36,7 @@ describe('<Item/>', () => {
     });
 
     it('renders the buttons properly', ()=>{
-        const wrapper = shallow(<Item item={fakeItem}/>);
+        const wrapper = shallow(<ItemComponent item={fakeItem}/>);
         
         const ButtonList = wrapper.find('.buttonList');
         expect(ButtonList.children()).toHaveLength(3);
@@ -44,5 +44,5 @@ describe('<Item/>', () => {
         expect(ButtonList.find('AddToCart').exists()).toBe(true);
         expect(ButtonList.find('DeleteItem').exists()).toBe(true);
     })
-    */
+    
 })
