@@ -43,7 +43,7 @@ class Order extends Component {
                     if (error) return <Error error={error} />;
                     const order = data.order;
                     return (
-                        <OrderStyles>
+                        <OrderStyles data-test="order">
                             <p>
                                 <span>ID</span>
                                 <span>{order.id}</span>
@@ -85,4 +85,5 @@ class Order extends Component {
     }
 }
 
+export {SINGLE_ORDER_QUERY};
 export default Order;
