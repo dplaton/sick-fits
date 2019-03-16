@@ -35,13 +35,16 @@ server.express.use(async (req, res, next) => {
     next();
 })
 console.log(`Using frontend_url ${process.env.FRONTEND_URL}`);
+
 server.start(
+    // pass the CORS options here
     {
         cors: {
             credentials: true,
-            origin: "*"
+            origin: [process.env.FRONTEND_URL]
         }
     },
+    // we get a callback function with a data object after the server starts
     data => {
         console.log(`Server running on http://localhost:${data.port}`);
     }
