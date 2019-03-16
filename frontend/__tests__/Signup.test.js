@@ -5,7 +5,7 @@ import { MockedProvider } from "react-apollo/test-utils";
 import { ApolloConsumer } from "react-apollo";
 
 import Signup, { SIGNUP_MUTATION } from "../components/Signup";
-import { fakeUser } from "../lib/testUtils";
+import { fakeUser } from "../utils/testUtils";
 import { CURRENT_USER_QUERY } from "../components/User";
 
 const me = fakeUser();

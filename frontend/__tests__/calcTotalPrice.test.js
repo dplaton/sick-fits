@@ -1,4 +1,4 @@
-import calcTotalPrice from "../lib/calcTotalPrice";
+import calcTotalPrice from "../utils/calcTotalPrice";
 
 describe("The caclTotalPrice utility", () => {
     it("should return the correct total for a properly defined cart", () => {

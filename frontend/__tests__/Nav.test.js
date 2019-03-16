@@ -4,7 +4,7 @@ import wait from "waait";
 import { MockedProvider } from "react-apollo/test-utils";
 import Nav from "../components/Nav";
 import { CURRENT_USER_QUERY } from "../components/User";
-import { fakeUser, fakeCartItem } from "../lib/testUtils";
+import { fakeUser, fakeCartItem } from "../utils/testUtils";
 
 const notSignedInMocks = [
     {

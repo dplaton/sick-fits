@@ -6,7 +6,7 @@ import Router from "next/router";
 import NProgress from "nprogress";
 
 import User, { CURRENT_USER_QUERY } from "./User";
-import calcTotalPrice from "../lib/calcTotalPrice";
+import calcTotalPrice from "../utils/calcTotalPrice";
 
 const CREATE_ORDER_MUTATION = gql`
     mutation createOrder($token: String!) {

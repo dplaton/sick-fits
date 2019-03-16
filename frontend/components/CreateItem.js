@@ -3,7 +3,7 @@ import gql from 'graphql-tag'
 import {Mutation} from 'react-apollo'
 import Router from 'next/router'
 
-import formatMoney from '../lib/formatMoney'
+import formatMoney from '../utils/formatMoney'
 import Form from './styles/Form'
 import Error from './ErrorMessage'
 

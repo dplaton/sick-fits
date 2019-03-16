@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 
 import Link from 'next/link';
-import formatMoney from '../lib/formatMoney';
+import formatMoney from '../utils/formatMoney';
 import ItemStyles from './styles/ItemStyles';
 import Title from './styles/Title';
 import PriceTag from './styles/PriceTag';

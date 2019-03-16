@@ -2,7 +2,7 @@ import React from "react";
 import { Query, Mutation } from "react-apollo";
 import {adopt} from "react-adopt";
 import gql from "graphql-tag";
-import formatMoney from "../lib/formatMoney";
+import formatMoney from "../utils/formatMoney";
 
 import User from "./User";
 import CartStyles from "./styles/CartStyles";

@@ -1,4 +1,4 @@
-import formatMoney from '../lib/formatMoney';
+import formatMoney from '../utils/formatMoney';
 
 describe('The formatMoney utility', () => {
     

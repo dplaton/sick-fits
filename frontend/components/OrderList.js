@@ -4,7 +4,7 @@ import {Query} from 'react-apollo';
 import Link from 'next/link';
 import {formatDistance} from 'date-fns';
 
-import formatMoney from '../lib/formatMoney.js';
+import formatMoney from '../utils/formatMoney.js';
 import Error from './ErrorMessage';
 import OrderItemStyles from './styles/OrderItemStyles';
 import styled from 'styled-components';

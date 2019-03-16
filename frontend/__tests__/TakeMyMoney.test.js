@@ -7,7 +7,7 @@ import Router from "next/router";
 import NProgress from "nprogress";
 
 import TakeMyMoney, { CREATE_ORDER_MUTATION } from "../components/TakeMyMoney";
-import { fakeUser, fakeCartItem } from "../lib/testUtils";
+import { fakeUser, fakeCartItem } from "../utils/testUtils";
 import { CURRENT_USER_QUERY } from "../components/User";
 
 Router.router = { push: jest.fn() };

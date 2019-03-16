@@ -3,7 +3,7 @@ import PropTypes from "prop-types";
 import gql from "graphql-tag";
 import { Query } from "react-apollo";
 import { format } from "date-fns";
-import formatMoney from "../lib/formatMoney";
+import formatMoney from "../utils/formatMoney";
 
 import OrderStyles from "./styles/OrderStyles";
 import Error from "./ErrorMessage";

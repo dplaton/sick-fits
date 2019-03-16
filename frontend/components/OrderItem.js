@@ -1,5 +1,5 @@
 import React from "react";
-import formatMoney from "../lib/formatMoney";
+import formatMoney from "../utils/formatMoney";
 
 import OrderItemStyles from "./styles/OrderItemStyles";
 

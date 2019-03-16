@@ -1,7 +1,7 @@
 import App, {Container} from 'next/app'
 import Page from '../components/Page'
 import {ApolloProvider} from 'react-apollo'
-import withData from '../lib/withData'
+import withData from '../utils/withData'
 
 class MyApp extends App {
 

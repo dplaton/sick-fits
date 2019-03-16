@@ -5,7 +5,7 @@ import { MockedProvider } from "react-apollo/test-utils";
 import Router from "next/router";
 
 import CreateItem, { CREATE_ITEM_MUTATION } from "../components/CreateItem";
-import { fakeItem } from "../lib/testUtils";
+import { fakeItem } from "../utils/testUtils";
 import { resetIdCounter } from "downshift";
 
 const MOCK_DOG_IMAGE = "https://www.dogs.com/dog.jpg";

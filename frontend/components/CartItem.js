@@ -1,5 +1,5 @@
 import React from "react";
-import formatMoney from "../lib/formatMoney";
+import formatMoney from "../utils/formatMoney";
 import styled from "styled-components";
 
 import RemoveFromCart from "./RemoveFromCart";
