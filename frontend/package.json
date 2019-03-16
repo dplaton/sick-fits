@@ -9,9 +9,10 @@
   "scripts": {
     "dev": "next -p 7777",
     "build": "next build",
-    "start": "next start -p $PORT",
+    "start": "next start",
     "test": "NODE_ENV=test jest --watch --coverage",
-    "heroku-postbuild": "next build"
+    "heroku-postbuild": "next build",
+    "now-build":"next build"
   },
   "author": "",
   "license": "ISC",
