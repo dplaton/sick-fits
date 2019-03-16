@@ -73,5 +73,5 @@ type User {
   password: String!
   permissions: [Permission!]!
   cart:[CartItem!]!
-  orders:[OrdersItem]
+  orders:[OrderItem]
 }
