@@ -41,11 +41,11 @@ server.start(
     {
         cors: {
             credentials: true,
-            origin: process.env.FRONTEND_URL
+            origin: [process.env.FRONTEND_URL,'http://localhost:7777']
         }
     },
     // we get a callback function with a data object after the server starts
     data => {
-        console.log(`Server running on http://localhost:${data.port}`);
+        console.log(`Server running on port ${data.port}`);
     }
 );
