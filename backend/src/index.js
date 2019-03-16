@@ -41,7 +41,7 @@ server.start(
     {
         cors: {
             credentials: true,
-            origin: [process.env.FRONTEND_URL]
+            origin: process.env.FRONTEND_URL
         }
     },
     // we get a callback function with a data object after the server starts
