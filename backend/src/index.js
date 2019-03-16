@@ -34,7 +34,7 @@ server.express.use(async (req, res, next) => {
     req.user = theUser;
     next();
 })
-
+console.log(`Using frontend_url ${process.env.FRONTEND_URL}`);
 server.start(
     {
         cors: {
