@@ -122,8 +122,8 @@ const Mutations = {
             process.env.APP_SECRET
         );
 
-        // set it as a cookie on the updatedUser
-        context.updatedUser.cookie('token', token, {
+        // set it as a cookie on the response
+        context.response.cookie('token', token, {
             httpOnly: true,
             maxAge: 1000 * 60 * 60 * 24 * 365 // one year
         });
